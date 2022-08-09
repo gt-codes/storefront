@@ -3,6 +3,10 @@ import { Dialog, Popover, Tab, Transition } from '@headlessui/react';
 import { MenuIcon, SearchIcon, ShoppingBagIcon, XIcon } from '@heroicons/react/outline';
 import { classNames } from '../utils';
 import NextImage from '../components/NextImage';
+import { GetStaticProps, InferGetStaticPropsType } from 'next';
+import { client } from '../utils/contentful';
+import { Favorite, Category } from '../utils/types';
+import CategoryPreview from '../components/CategoryPreview';
 
 const navigation = {
 	categories: [
@@ -182,7 +186,30 @@ const footerNavigation = {
 	],
 };
 
-export default function Example() {
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+	const [favorites, categories] = await Promise.all([
+		client.getEntries<Favorite>({ content_type: 'favorites' }),
+		client.getEntries<Category>({ content_type: 'category' }),
+	]);
+	console.log({
+		favorites: favorites.items.map((el) => el.fields),
+		categories: categories.items.map((el) => el.fields),
+	});
+
+	return {
+		props: {
+			favorites: favorites.items.map((el) => el.fields),
+			categories: categories.items.map((el) => el.fields),
+		},
+	};
+};
+
+type Props = {
+	favorites: Favorite[];
+	categories: Category[];
+};
+
+export default function Example({ categories, favorites }: Props) {
 	const [open, setOpen] = useState(false);
 
 	return (
@@ -354,7 +381,7 @@ export default function Example() {
 							<a href='#'>
 								<span className='sr-only'>Workflow</span>
 								<NextImage
-									className='h-8 w-auto'
+									className='h-8 w-8'
 									src='https://tailwindui.com/img/logos/workflow-mark.svg?color=indigo&shade=600'
 									alt=''
 								/>
@@ -532,7 +559,7 @@ export default function Example() {
 					</div>
 				</div>
 			</nav>
-			<header className='relative'>
+			<header className='relative overflow-hidden'>
 				{/* Hero section */}
 				<div className='pt-16 pb-80 sm:pt-24 sm:pb-40 lg:pt-40 lg:pb-48'>
 					<div className='relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:static'>
@@ -639,78 +666,9 @@ export default function Example() {
 						</div>
 
 						<div className='mt-6 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:grid-rows-2 sm:gap-x-6 lg:gap-8'>
-							<div className='group aspect-w-2 aspect-h-1 rounded-lg overflow-hidden sm:aspect-h-1 sm:aspect-w-1 sm:row-span-2'>
-								<NextImage
-									src='https://tailwindui.com/img/ecommerce-images/home-page-03-featured-category.jpg'
-									alt="Two models wearing women's black cotton crewneck tee and off-white cotton crewneck tee."
-									className='object-center object-cover group-hover:opacity-75'
-								/>
-								<div
-									aria-hidden='true'
-									className='bg-gradient-to-b from-transparent to-black opacity-50'
-								/>
-								<div className='p-6 flex items-end'>
-									<div>
-										<h3 className='font-semibold text-white'>
-											<a href='#'>
-												<span className='absolute inset-0' />
-												New Arrivals
-											</a>
-										</h3>
-										<p aria-hidden='true' className='mt-1 text-sm text-white'>
-											Shop now
-										</p>
-									</div>
-								</div>
-							</div>
-							<div className='group aspect-w-2 aspect-h-1 rounded-lg overflow-hidden sm:relative sm:aspect-none sm:h-full'>
-								<NextImage
-									src='https://tailwindui.com/img/ecommerce-images/home-page-03-category-01.jpg'
-									alt='Wooden shelf with gray and olive drab green baseball caps, next to wooden clothes hanger with sweaters.'
-									className='object-center object-cover group-hover:opacity-75 sm:absolute sm:inset-0 sm:w-full sm:h-full'
-								/>
-								<div
-									aria-hidden='true'
-									className='bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0'
-								/>
-								<div className='p-6 flex items-end sm:absolute sm:inset-0'>
-									<div>
-										<h3 className='font-semibold text-white'>
-											<a href='#'>
-												<span className='absolute inset-0' />
-												Accessories
-											</a>
-										</h3>
-										<p aria-hidden='true' className='mt-1 text-sm text-white'>
-											Shop now
-										</p>
-									</div>
-								</div>
-							</div>
-							<div className='group aspect-w-2 aspect-h-1 rounded-lg overflow-hidden sm:relative sm:aspect-none sm:h-full'>
-								<NextImage
-									src='https://tailwindui.com/img/ecommerce-images/home-page-03-category-02.jpg'
-									alt='Walnut desk organizer set with white modular trays, next to porcelain mug on wooden desk.'
-									className='object-center object-cover group-hover:opacity-75 sm:absolute sm:inset-0 sm:w-full sm:h-full'
-								/>
-								<div
-									aria-hidden='true'
-									className='bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0'
-								/>
-								<div className='p-6 flex items-end sm:absolute sm:inset-0'>
-									<div>
-										<h3 className='font-semibold text-white'>
-											<a href='#'>
-												<span className='absolute inset-0' />
-												Workspace
-											</a>
-										</h3>
-										<p aria-hidden='true' className='mt-1 text-sm text-white'>
-											Shop now
-										</p>
-									</div>
-								</div>
-							</div>
+							{categories.map((el, idx) => (
+								<CategoryPreview key={idx} {...el} isLarge={idx === 0} />
+							))}
 						</div>
 
 						<div className='mt-6 sm:hidden'>
