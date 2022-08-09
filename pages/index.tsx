@@ -166,10 +166,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 		client.getEntries<Favorite>({ content_type: 'favorites' }),
 		client.getEntries<Category>({ content_type: 'category' }),
 	]);
-	console.log({
-		favorites: favorites.items.map((el) => el.fields),
-		categories: categories.items.map((el) => el.fields),
-	});
 
 	return {
 		props: {
