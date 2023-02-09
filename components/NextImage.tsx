@@ -1,5 +1,5 @@
 import { classNames } from '../utils';
-import Image, { ImageProps } from 'next/future/image';
+import Image, { ImageProps } from 'next/image';
 import { useState } from 'react';
 
 export default function NextImage(props: ImageProps) {
