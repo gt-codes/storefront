@@ -163,8 +163,8 @@ const footerNavigation = {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const [favorites, categories] = await Promise.all([
-		client.getEntries<Favorite>({ content_type: 'storefrontFavorite' }),
-		client.getEntries<Category>({ content_type: 'storefrontCategory' }),
+		client.getEntries<Favorite>({ content_type: process.env.CONTENTFUL_FAVORITE_ID }),
+		client.getEntries<Category>({ content_type: process.env.CONTENTFUL_CATEGORY_ID }),
 	]);
 
 	return {
