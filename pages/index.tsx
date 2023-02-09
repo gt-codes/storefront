@@ -167,6 +167,11 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 		client.getEntries<Category>({ content_type: process.env.CONTENTFUL_CATEGORY_ID }),
 	]);
 
+	console.log({
+		favorites: favorites.items.map((el) => el.fields),
+		categories: categories.items.map((el) => el.fields),
+		timestamp: new Date().toISOString(),
+	});
 	return {
 		props: {
 			favorites: favorites.items.map((el) => el.fields),
