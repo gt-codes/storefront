@@ -162,11 +162,17 @@ const footerNavigation = {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
+	await new Promise((resolve) => setTimeout(resolve, 1000));
 	const [favorites, categories] = await Promise.all([
-		client.getEntries<Favorite>({ content_type: 'favorites' }),
-		client.getEntries<Category>({ content_type: 'category' }),
+		client.getEntries<Favorite>({ content_type: process.env.CONTENTFUL_FAVORITE_ID }),
+		client.getEntries<Category>({ content_type: process.env.CONTENTFUL_CATEGORY_ID }),
 	]);
 
+	console.log({
+		favorites: favorites.items.map((el) => el.fields),
+		categories: categories.items.map((el) => el.fields),
+		timestamp: new Date().toISOString(),
+	});
 	return {
 		props: {
 			favorites: favorites.items.map((el) => el.fields),

@@ -5,11 +5,6 @@ const nextConfig = {
 	images: {
 		domains: ['tailwindui.com', 'images.unsplash.com'],
 	},
-	experimental: {
-		images: {
-			allowFutureImage: true,
-		},
-	},
 };
 
 module.exports = nextConfig;
